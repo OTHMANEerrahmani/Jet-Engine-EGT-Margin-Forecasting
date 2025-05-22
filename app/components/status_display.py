@@ -18,11 +18,12 @@ def status_display_component() -> rx.Component:
             ),
             rx.el.div(
                 rx.cond(
-                    ForecastState.status_message,
+                    ForecastState.status_message != "",
                     rx.el.p(
                         ForecastState.status_message,
                         class_name=rx.cond(
-                            ForecastState.error_message.is_truthy(),
+                            ForecastState.error_message
+                            != None,
                             "text-red-700 font-medium p-3 bg-red-50 rounded-lg text-sm",
                             "text-green-700 font-medium p-3 bg-green-50 rounded-lg text-sm",
                         ),
@@ -33,7 +34,7 @@ def status_display_component() -> rx.Component:
             ),
         ),
         rx.cond(
-            ForecastState.error_message,
+            ForecastState.error_message != None,
             rx.el.div(
                 rx.icon(
                     tag="flag_triangle_right",
