@@ -8,7 +8,7 @@ def status_display_component() -> rx.Component:
             ForecastState.is_processing,
             rx.el.div(
                 rx.spinner(
-                    size="3", class_name="text-indigo-600"
+                    class_name="h-5 w-5 text-indigo-600"
                 ),
                 rx.el.p(
                     ForecastState.status_message,

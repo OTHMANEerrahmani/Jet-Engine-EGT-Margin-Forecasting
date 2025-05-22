@@ -4,6 +4,7 @@ import numpy as np
 from datetime import datetime, timedelta
 import io
 import json
+import asyncio
 
 try:
     from xgboost import XGBRegressor
@@ -66,10 +67,14 @@ class ForecastState(rx.State):
             self.show_chart = False
             self.forecast_chart_data = []
             self.raw_forecast_df_json = ""
-            outfile_path = rx.get_upload_dir() / file.name
+            upload_dir = rx.get_upload_dir()
+            if not upload_dir.exists():
+                upload_dir.mkdir(
+                    parents=True, exist_ok=True
+                )
+            outfile_path = upload_dir / file.name
             with open(outfile_path, "wb") as outfile:
                 outfile.write(upload_data)
-            self.uploaded_file_name = file.name
         except Exception as e:
             self.error_message = (
                 f"Erreur lors du téléchargement: {str(e)}"
@@ -274,7 +279,10 @@ class ForecastState(rx.State):
                 data=output.getvalue(), filename=file_name
             )
         except Exception as e:
-            self.error_message = f"Erreur lors de la création du fichier Excel: {str(e)}"
+            async_error_message = f"Erreur lors de la création du fichier Excel: {str(e)}"
+            print(async_error_message)
             return rx.toast(
-                f"Erreur Excel: {str(e)}", duration=5000
+                f"Erreur Excel: {str(e)}",
+                duration=5000,
+                id="excel_error_toast",
             )
